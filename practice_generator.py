@@ -89,6 +89,8 @@ DRILLS = {
     50:{"name":"Dirt Ball Read","cat":"baserunning","game":True,"desc1":"Runner on 3rd, 3-2 count, full go. Coach bounces pitch in the dirt. Runner reads and goes or holds","desc2":"Catcher scored for blocks and throws, runner scored for clean advances","cues":["Go on contact with the dirt — don't wait to see the block","If catcher blocks it clean and close, slam the brakes","Never get thrown out at home on a dirt ball — make them earn it"]},
     51:{"name":"Gap Shot","cat":"baserunning","game":True,"desc1":"Ball hit to the gap with runner on 1st. Runner reads the hit, rounds 2nd aggressively, decides at 3rd","desc2":"Full OF plays out live. Scored: runner scores = offense point, thrown out = defense point","cues":["Read gap off the bat — go immediately, don't hesitate","Round 2nd at full speed, look up at 3rd coach coming into the bag","Aggressive default: when in doubt, keep running"]},
     52:{"name":"Front Toss Battle","cat":"hitting","game":True,"desc1":"Two hitters compete head to head, coach front-tossing 5 pitches each. Scored by zone","desc2":"Oppo = 2pts, up the middle = 1pt, pull = 0. Forces intentional hitting under real competition pressure","cues":["Pick your zone before the toss — commit to it","Stay back and let the ball travel to your spot","Oppo isn't weak — it's disciplined"]},
+    53:{"name":"Soft Toss Situational","cat":"situational","game":True,"desc1":"4 infielders vs 4 hitters (5v5 with 1 in OF if you've got 10). Coach soft tosses, group scrimmages live situations","desc2":"Full competitive rep with real defensive assignments and baserunning reads on every play","cues":["Read the situation before the toss","Call the play out loud","Play it like a real at bat"]},
+    54:{"name":"Team Throw Relay Run","cat":"throwing","game":True,"desc1":"2 teams, 4-5 balls lined up 10 yds out. Player sprints, fields, turns and throws to a teammate who catches, drops it, and sprints for the next ball","desc2":"Speed and accuracy under fatigue — builds relay habits and competitive throwing mechanics","cues":["Catch before you celebrate","Turn and throw in one motion","Sprint the whole way, no jogging"]},
 }
 
 def draw_diagram(c, x, y, w, h, drill_id):
@@ -521,6 +523,34 @@ def draw_diagram(c, x, y, w, h, drill_id):
         arc(coach_x,coach_y+5,h1x-4,h1y,AMBER,1.5,0.2); arc(coach_x,coach_y+5,h2x+4,h2y,AMBER,1.5,0.2)
         box("2pts OPPO",h1x-w*0.18,cy+h*0.3,5.5,GREEN); box("1pt CENTER",cx,cy+h*0.34,5.5,AMBER); box("0pts PULL",h2x+w*0.18,cy+h*0.3,5.5,RED)
         box("HEAD TO HEAD — INTENTIONAL HITTING",cx,y+5,5,RED)
+    elif drill_id==53:
+        r=dmd(); b=bases(r)
+        # 4 infielders
+        for pos,(px2,py2) in [("SS",(cx-r*0.45,cy+r*0.2)),("2B",(cx+r*0.35,cy+r*0.2)),("3B",(b["3B"][0]+8,b["3B"][1])),("1B",(b["1B"][0]+8,b["1B"][1]))]:
+            dot(px2,py2,NAVY,lbl=pos,above=True)
+        # Hitter at plate
+        dot(b["HM"][0],b["HM"][1]-10,RED,lbl="H",above=False)
+        # Coach soft tossing
+        dot(b["HM"][0]-18,b["HM"][1]+6,PURPLE,lbl="C",above=False)
+        arc(b["HM"][0]-14,b["HM"][1]+8,b["HM"][0]-4,b["HM"][1]+8,AMBER,1.5,0.3)
+        # Runner on 1B
+        dot(b["1B"][0]+8,b["1B"][1]+12,PINK,4,lbl="R",above=True)
+        box("LIVE SITUATIONS — CALL THE PLAY",cx,y+5,5.5,PURPLE)
+    elif drill_id==54:
+        c.setFillColor(GRASS); c.rect(x,y,w,h,fill=1,stroke=0)
+        # Two team lanes
+        for ty,col,lb in [(cy+h*0.22,NAVY,"TEAM 1"),(cy-h*0.08,GREEN,"TEAM 2")]:
+            box(lb,x+w*0.08,ty+4,5.5,col)
+            # Balls lined up
+            ball_xs=[x+w*0.28+i*w*0.12 for i in range(4)]
+            for bx2 in ball_xs: ball(bx2,ty,r=3.5)
+            # Sprinting player
+            dot(x+w*0.2,ty,col,5)
+            arr(x+w*0.2,ty,ball_xs[0]-4,ty,col,1.5)
+            # Catcher teammate at end
+            dot(x+w*0.85,ty,col,5,lbl="CATCH",above=True)
+            arr(ball_xs[0]+4,ty,x+w*0.82,ty,AMBER,1.8)
+        box("SPRINT — FIELD — THROW — REPEAT",cx,y+5,5.5,HexColor("#854F0B"))
     else:
         r=dmd(); bases(r)
     c.restoreState()
